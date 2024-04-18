@@ -9,23 +9,23 @@
 #include<stdlib.h>
 #include<string.h>
 
-#define MAX_STACK_SIZE 10
-#define MAX_EXPRESSION_SIZE 20
+#define MAX_STACK_SIZE 100
+#define MAX_EXPRESSION_SIZE 100
 
 /* stack 내에서 우선순위, lparen = 0 가장 낮음 */
 typedef enum{
 	lparen = 0,  /* ( 왼쪽 괄호 */
 	rparen = 9,  /* ) 오른쪽 괄호*/
-	times = 7,   /* * 곱셈 */
-	divide = 6,  /* / 나눗셈 */
-	plus = 5,    /* + 덧셈 */
-	minus = 4,   /* - 뺄셈 */
+	times = 7,   /* * 곱셈 */					// 곱셈과 나눗셈의 우선순위는 같다
+	divide = 7,  /* / 나눗셈 */
+	plus = 5,    /* + 덧셈 */					// 덧셈과 뺄셈의 우선순위는 같다
+	minus = 5,   /* - 뺄셈 */
 	operand = 1 /* 피연산자 */
 } precedence;
 
 char infixExp[MAX_EXPRESSION_SIZE];   	/* infix expression을 저장하는 배열 */
 char postfixExp[MAX_EXPRESSION_SIZE];	/* postfix로 변경된 문자열을 저장하는 배열 */
-char postfixStack[MAX_STACK_SIZE];	/* postfix로 변환을 위해 필요한 스택 */
+char postfixStack[MAX_STACK_SIZE] = {'0',};	/* postfix로 변환을 위해 필요한 스택 */
 int evalStack[MAX_STACK_SIZE];		/* 계산을 위해 필요한 스택 */
 
 int postfixStackTop = -1;  /* postfixStack용 top */
@@ -33,7 +33,7 @@ int evalStackTop = -1;	   /* evalStack용 top */
 
 int evalResult = 0;	   /* 계산 결과를 저장 */
 
-void postfixpush(char x);
+void postfixPush(char x);
 char postfixPop();
 void evalPush(int x);
 int evalPop();
@@ -165,14 +165,44 @@ void toPostfix()
 	/* infixExp의 문자 하나씩을 읽기위한 포인터 */
 	char *exp = infixExp;
 	char x; /* 문자하나를 임시로 저장하기 위한 변수 */
-
+	int num = 0;
 	/* exp를 증가시켜가면서, 문자를 읽고 postfix로 변경 */
 	while(*exp != '\0')
 	{
-		/* 필요한 로직 완성 */
-
+		x = getToken(*exp);
+		if (x == 0) x = 10; 				// '(' 연산자가 stack에 쌓일때는 우선순위가 제일 높음
+		if(x == operand){
+			charCat(exp);
+			num++;
+		}
+		else if(x == rparen){
+			while(getToken(postfixStack[postfixStackTop]) != lparen){		// x가 ')' 연산자이면 (' 연산자를 만나기 전까지 모두 pop 처리
+				postfixExp[num] = postfixPop();
+				num++;
+			}
+			postfixPop();												// '(' 연산자를 pop
+		}
+		else{
+			if(postfixStack[0] == '0') postfixPush(*exp);			// stack이 비어있을때 스텍에 넣음
+			else{
+				if(getToken(postfixStack[postfixStackTop]) < x){		// stack의 마지막보다 우선순위가 높으면 stack에 쌓임
+					postfixPush(*exp);
+				}
+				else{
+					while(getToken(postfixStack[postfixStackTop]) >= x){		// x가 stack의 마지막보다 우선순위가 낮으면 stack의 변수를 pop
+						postfixExp[num] = postfixPop();
+						num++;							
+					}
+					postfixPush(*exp);											// x보다 우선순위가 낮은 변수를 모두 pop 시킨 후에 x를 push
+				}
+			}
+		}
+		exp++;
 	}
-
+	while(postfixStackTop != -1){					// stack에 남아있는 연산자를 모두 pop
+		postfixExp[num] = postfixPop();
+		num++;
+	}
 	/* 필요한 로직 완성 */
 
 }
@@ -207,5 +237,5 @@ void reset()
 void evaluation()
 {
 	/* postfixExp, evalStack을 이용한 계산 */
+	
 }
-
