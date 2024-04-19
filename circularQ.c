@@ -34,7 +34,7 @@ int main(void)
 	char command;
 
 	do{
-		printf("\n-----------------------------------------------------\n");
+		printf("\n------------이한결--------------2021041055-------------\n");
 		printf("                     Circular Q                   \n");
 		printf("------------------------------------------------------\n");
 		printf(" Insert=i,  Delete=d,   PrintQ=p,   Debug=b,   Quit=q \n");

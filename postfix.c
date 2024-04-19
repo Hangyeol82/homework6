@@ -51,7 +51,7 @@ int main()
 	char command;
 
 	do{
-		printf("----------------------------------------------------------------\n");
+		printf("-----------------이한결--------------2021041055------------------\n");
 		printf("               Infix to Postfix, then Evaluation               \n");
 		printf("----------------------------------------------------------------\n");
 		printf(" Infix=i,   Postfix=p,  Eval=e,   Debug=d,   Reset=r,   Quit=q \n");
