@@ -115,7 +115,7 @@ int isFull(QueueType *cQ)
 void enQueue(QueueType *cQ, element item)
 {
 	cQ->rear = ((cQ->rear+1) % MAX_QUEUE_SIZE);			// rear의 값을 1 증가
-	if(cQ->front == cQ->rear) return;								// 큐가 꽉 차있으면 넣을 수 없으니까 함수 종료
+	if(cQ->front == cQ->rear) isFull(cQ);								// 큐가 꽉 차있으면 넣을 수 없으니까 함수 종료
 	else{
 		cQ->queue[cQ->rear] = item;						// queue에 rear번째에다 item을 넣기
 	}
@@ -124,7 +124,7 @@ void enQueue(QueueType *cQ, element item)
 /* complete the function */
 void deQueue(QueueType *cQ, element *item)
 {
-	if(cQ->front == cQ->rear) return;								// 큐가 비어있으면 빼낼 값이 없으니까 함수 종료
+	if(cQ->front == cQ->rear) isFull(cQ);								// 큐가 비어있으면 빼낼 값이 없으니까 함수 종료
 	else{
 		cQ->front = cQ->front+1 % MAX_QUEUE_SIZE;									// front 값을 1 증가시켜 앞에 있는 값을 무시
 	}
