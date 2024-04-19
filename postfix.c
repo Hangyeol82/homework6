@@ -16,9 +16,9 @@
 typedef enum{
 	lparen = 0,  /* ( 왼쪽 괄호 */
 	rparen = 9,  /* ) 오른쪽 괄호*/
-	times = 7,   /* * 곱셈 */					// 곱셈과 나눗셈의 우선순위는 같다
+	times = 8,   /* * 곱셈 */					// 곱셈과 나눗셈의 우선순위는 같다
 	divide = 7,  /* / 나눗셈 */
-	plus = 5,    /* + 덧셈 */					// 덧셈과 뺄셈의 우선순위는 같다
+	plus = 6,    /* + 덧셈 */					// 덧셈과 뺄셈의 우선순위는 같다
 	minus = 5,   /* - 뺄셈 */
 	operand = 1 /* 피연산자 */
 } precedence;
@@ -236,6 +236,29 @@ void reset()
 
 void evaluation()
 {
-	/* postfixExp, evalStack을 이용한 계산 */
-	
+    /* postfixExp, evalStack을 이용한 계산 */
+    char *exp = postfixExp;							// exp는 postfixExp에 하나씩 접근하기 위해 선언
+    if (evalResult == 0) evalResult = *exp - '0';	// evalResult의 값에 계산을 할건데 처음에는 evalResult의 값을 초기화해야함
+    exp++;
+    precedence a;
+    while(*exp != '\0' && (a = getToken(*exp))){
+        if (a == 1) evalPush(*exp - '0');			// 피연산자는 스택에 Push
+        else{
+            switch (a){
+                case times:
+                    evalResult *= evalPop();		// 곱하기 연산자 계산
+                    break;
+                case divide:
+                    evalResult /= evalPop();		// 나누기 연산자 계산
+                    break;
+                case plus:
+                    evalResult += evalPop();		// 더하기 연산자 계산
+                    break;
+                case minus:
+                    evalResult -= evalPop();		// 빼기 연산자 계산
+                    break;
+            }
+        }
+        exp++;
+    }
 }
